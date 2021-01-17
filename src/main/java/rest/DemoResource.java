@@ -2,22 +2,8 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dtos.BoredDTO;
-import dtos.FoodDTO;
-import dtos.CombinedDTO;
-import dtos.KanyeDTO;
-import dtos.QuoteDTO;
-import dtos.RandomDogDTO;
 import entities.User;
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -30,16 +16,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import utils.EMF_Creator;
-import utils.HttpUtils;
 
 /**
  * @author lam@cphbusiness.dk
  */
 @Path("info")
 public class DemoResource {
-
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private Gson gson = new Gson();
 
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     @Context
@@ -88,72 +70,70 @@ public class DemoResource {
         return "{\"msg\": \"Hello to (admin) User: " + thisuser + "\"}";
     }
 
-    @GET
-    @Path("extern")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getJokes() throws IOException, InterruptedException, ExecutionException, TimeoutException {
-        ExecutorService threadPool = Executors.newCachedThreadPool();
-        Callable< RandomDogDTO> dogTask = new Callable<RandomDogDTO>() {
-            @Override
-            public RandomDogDTO call() throws Exception {
-                String randomDog = HttpUtils.fetchData("https://dog.ceo/api/breeds/image/random");
-                RandomDogDTO randomDogDTO = gson.fromJson(randomDog, RandomDogDTO.class);
-                return randomDogDTO;
-            }
-        };
-
-//        Callable<QuoteDTO> quoteTask = new Callable<QuoteDTO>() {
+//
+//    @GET
+//    @Path("extern")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public String getJokes() throws IOException, InterruptedException, ExecutionException, TimeoutException {
+//        ExecutorService threadPool = Executors.newCachedThreadPool();
+//        Callable< RandomDogDTO> dogTask = new Callable<RandomDogDTO>() {
 //            @Override
-//            public QuoteDTO call() throws Exception {
-//                String randomQuote = HttpUtils.fetchData("https://programming-quotes-api.herokuapp.com/quotes/random");
-//                QuoteDTO randomQuoteDTO = gson.fromJson(randomQuote, QuoteDTO.class);
-//                return randomQuoteDTO;
+//            public RandomDogDTO call() throws Exception {
+//                String randomDog = HttpUtils.fetchData("https://dog.ceo/api/breeds/image/random");
+//                RandomDogDTO randomDogDTO = gson.fromJson(randomDog, RandomDogDTO.class);
+//                return randomDogDTO;
 //            }
 //        };
-
-//        Callable<FoodDTO> foodTask = new Callable<FoodDTO>() {
+//
+////        Callable<QuoteDTO> quoteTask = new Callable<QuoteDTO>() {
+////            @Override
+////            public QuoteDTO call() throws Exception {
+////                String randomQuote = HttpUtils.fetchData("https://programming-quotes-api.herokuapp.com/quotes/random");
+////                QuoteDTO randomQuoteDTO = gson.fromJson(randomQuote, QuoteDTO.class);
+////                return randomQuoteDTO;
+////            }
+////        };
+//
+////        Callable<FoodDTO> foodTask = new Callable<FoodDTO>() {
+////            @Override
+////            public FoodDTO call() throws Exception {
+////                String food = HttpUtils.fetchData("https://foodish-api.herokuapp.com/api");
+////                FoodDTO foodDTO = gson.fromJson(food, FoodDTO.class);
+////                return foodDTO;
+////            }
+////        };
+//
+//        Callable<BoredDTO> boredTask = new Callable<BoredDTO>() {
 //            @Override
-//            public FoodDTO call() throws Exception {
-//                String food = HttpUtils.fetchData("https://foodish-api.herokuapp.com/api");
-//                FoodDTO foodDTO = gson.fromJson(food, FoodDTO.class);
-//                return foodDTO;
+//            public BoredDTO call() throws Exception {
+//                String bored = HttpUtils.fetchData("https://www.boredapi.com/api/activity");
+//                BoredDTO boredDTO = gson.fromJson(bored, BoredDTO.class);
+//                return boredDTO;
 //            }
 //        };
-
-        Callable<BoredDTO> boredTask = new Callable<BoredDTO>() {
-            @Override
-            public BoredDTO call() throws Exception {
-                String bored = HttpUtils.fetchData("https://www.boredapi.com/api/activity");
-                BoredDTO boredDTO = gson.fromJson(bored, BoredDTO.class);
-                return boredDTO;
-            }
-        };
-
-        Callable<KanyeDTO> kanyeTask = new Callable<KanyeDTO>() {
-            @Override
-            public KanyeDTO call() throws Exception {
-                String kanye = HttpUtils.fetchData("https://api.kanye.rest/");
-                KanyeDTO kanyeDTO = gson.fromJson(kanye, KanyeDTO.class);
-                return kanyeDTO;
-            }
-        };
-
-        Future<RandomDogDTO> futureDog = threadPool.submit(dogTask);
-//        Future<QuoteDTO> futureQuote = threadPool.submit(quoteTask);
-//        Future<FoodDTO> futureFood = threadPool.submit(foodTask);
-        Future<BoredDTO> futureBored = threadPool.submit(boredTask);
-        Future<KanyeDTO> futureKanye = threadPool.submit(kanyeTask);
-        RandomDogDTO dog = futureDog.get(2, TimeUnit.SECONDS);
-//        QuoteDTO quote = futureQuote.get(2, TimeUnit.SECONDS);
-//        FoodDTO food = futureFood.get(2, TimeUnit.SECONDS);
-        BoredDTO bored = futureBored.get(2, TimeUnit.SECONDS);
-        KanyeDTO kanye = futureKanye.get(2, TimeUnit.SECONDS);
-
-        CombinedDTO combined = new CombinedDTO(bored, kanye, dog);
-        String json = GSON.toJson(combined);
-        return json;
-    }
-
-
-
+//
+//        Callable<KanyeDTO> kanyeTask = new Callable<KanyeDTO>() {
+//            @Override
+//            public KanyeDTO call() throws Exception {
+//                String kanye = HttpUtils.fetchData("https://api.kanye.rest/");
+//                KanyeDTO kanyeDTO = gson.fromJson(kanye, KanyeDTO.class);
+//                return kanyeDTO;
+//            }
+//        };
+//
+//        Future<RandomDogDTO> futureDog = threadPool.submit(dogTask);
+////        Future<QuoteDTO> futureQuote = threadPool.submit(quoteTask);
+////        Future<FoodDTO> futureFood = threadPool.submit(foodTask);
+//        Future<BoredDTO> futureBored = threadPool.submit(boredTask);
+//        Future<KanyeDTO> futureKanye = threadPool.submit(kanyeTask);
+//        RandomDogDTO dog = futureDog.get(2, TimeUnit.SECONDS);
+////        QuoteDTO quote = futureQuote.get(2, TimeUnit.SECONDS);
+////        FoodDTO food = futureFood.get(2, TimeUnit.SECONDS);
+//        BoredDTO bored = futureBored.get(2, TimeUnit.SECONDS);
+//        KanyeDTO kanye = futureKanye.get(2, TimeUnit.SECONDS);
+//
+//        CombinedDTO combined = new CombinedDTO(bored, kanye, dog);
+//        String json = GSON.toJson(combined);
+//        return json;
+//    }
 }

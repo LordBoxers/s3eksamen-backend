@@ -66,6 +66,8 @@ public class LoginEndpointTest {
         try {
             em.getTransaction().begin();
             //Delete existing users and roles to get a "fresh" database
+            em.createNamedQuery("SportTeam.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Sport.deleteAllRows").executeUpdate();
             em.createQuery("delete from User").executeUpdate();
             em.createQuery("delete from Role").executeUpdate();
 
@@ -219,16 +221,6 @@ public class LoginEndpointTest {
                 .statusCode(403)
                 .body("code", equalTo(403))
                 .body("message", equalTo("Not authenticated - do login"));
-    }
-    @Test
-    public void externAccess() {
-        login("user_admin", "test");
-        given()
-                .contentType("application/json")
-                .header("x-access-token", securityToken)
-                .when()
-                .get("/info/extern").then()
-                .statusCode(200);
     }
 
 }

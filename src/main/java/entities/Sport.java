@@ -1,0 +1,86 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package entities;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+
+/**
+ *
+ * @author Mibse
+ */
+@Entity
+@NamedQueries({
+    @NamedQuery(name = "Sport.deleteAllRows", query = "DELETE from Sport"),
+})
+public class Sport implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    private String name;
+    
+    private String description;
+    
+    @OneToMany(mappedBy = "sport", cascade = CascadeType.PERSIST)
+    private List<SportTeam> sportTeam;
+
+    public Sport(String name, String description) {
+        this.name = name;
+        this.description = description;
+        this.sportTeam = new ArrayList<SportTeam>();
+    }
+
+    public Sport() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<SportTeam> getSportTeam() {
+        return sportTeam;
+    }
+
+    public void setSportTeam(List<SportTeam> sportTeam) {
+        this.sportTeam = sportTeam;
+    }
+
+    public void addTeam(SportTeam team) {
+        this.sportTeam.add(team);
+        if (team != null) {
+            team.setSport(this);
+        }
+    }
+}
